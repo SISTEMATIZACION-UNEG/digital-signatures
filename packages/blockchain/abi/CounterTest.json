@@ -1,0 +1,567 @@
+[
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "log",
+    "inputs": [
+      {
+        "type": "string",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "log_address",
+    "inputs": [
+      {
+        "type": "address",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "log_array",
+    "inputs": [
+      {
+        "type": "uint256[]",
+        "name": "val",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "log_array",
+    "inputs": [
+      {
+        "type": "int256[]",
+        "name": "val",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "log_array",
+    "inputs": [
+      {
+        "type": "address[]",
+        "name": "val",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "log_bytes",
+    "inputs": [
+      {
+        "type": "bytes",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "log_bytes32",
+    "inputs": [
+      {
+        "type": "bytes32",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "log_int",
+    "inputs": [
+      {
+        "type": "int256",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "log_named_address",
+    "inputs": [
+      {
+        "type": "string",
+        "name": "key",
+        "indexed": false
+      },
+      {
+        "type": "address",
+        "name": "val",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "log_named_array",
+    "inputs": [
+      {
+        "type": "string",
+        "name": "key",
+        "indexed": false
+      },
+      {
+        "type": "uint256[]",
+        "name": "val",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "log_named_array",
+    "inputs": [
+      {
+        "type": "string",
+        "name": "key",
+        "indexed": false
+      },
+      {
+        "type": "int256[]",
+        "name": "val",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "log_named_array",
+    "inputs": [
+      {
+        "type": "string",
+        "name": "key",
+        "indexed": false
+      },
+      {
+        "type": "address[]",
+        "name": "val",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "log_named_bytes",
+    "inputs": [
+      {
+        "type": "string",
+        "name": "key",
+        "indexed": false
+      },
+      {
+        "type": "bytes",
+        "name": "val",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "log_named_bytes32",
+    "inputs": [
+      {
+        "type": "string",
+        "name": "key",
+        "indexed": false
+      },
+      {
+        "type": "bytes32",
+        "name": "val",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "log_named_decimal_int",
+    "inputs": [
+      {
+        "type": "string",
+        "name": "key",
+        "indexed": false
+      },
+      {
+        "type": "int256",
+        "name": "val",
+        "indexed": false
+      },
+      {
+        "type": "uint256",
+        "name": "decimals",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "log_named_decimal_uint",
+    "inputs": [
+      {
+        "type": "string",
+        "name": "key",
+        "indexed": false
+      },
+      {
+        "type": "uint256",
+        "name": "val",
+        "indexed": false
+      },
+      {
+        "type": "uint256",
+        "name": "decimals",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "log_named_int",
+    "inputs": [
+      {
+        "type": "string",
+        "name": "key",
+        "indexed": false
+      },
+      {
+        "type": "int256",
+        "name": "val",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "log_named_string",
+    "inputs": [
+      {
+        "type": "string",
+        "name": "key",
+        "indexed": false
+      },
+      {
+        "type": "string",
+        "name": "val",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "log_named_uint",
+    "inputs": [
+      {
+        "type": "string",
+        "name": "key",
+        "indexed": false
+      },
+      {
+        "type": "uint256",
+        "name": "val",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "log_string",
+    "inputs": [
+      {
+        "type": "string",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "log_uint",
+    "inputs": [
+      {
+        "type": "uint256",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "logs",
+    "inputs": [
+      {
+        "type": "bytes",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "IS_TEST",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "excludeArtifacts",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "string[]",
+        "name": "excludedArtifacts_"
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "excludeContracts",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "address[]",
+        "name": "excludedContracts_"
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "excludeSelectors",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "tuple[]",
+        "name": "excludedSelectors_",
+        "components": [
+          {
+            "type": "address",
+            "name": "addr"
+          },
+          {
+            "type": "bytes4[]",
+            "name": "selectors"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "excludeSenders",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "address[]",
+        "name": "excludedSenders_"
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "failed",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "setUp",
+    "constant": false,
+    "payable": false,
+    "inputs": [],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "targetArtifactSelectors",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "tuple[]",
+        "name": "targetedArtifactSelectors_",
+        "components": [
+          {
+            "type": "string",
+            "name": "artifact"
+          },
+          {
+            "type": "bytes4[]",
+            "name": "selectors"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "targetArtifacts",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "string[]",
+        "name": "targetedArtifacts_"
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "targetContracts",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "address[]",
+        "name": "targetedContracts_"
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "targetInterfaces",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "tuple[]",
+        "name": "targetedInterfaces_",
+        "components": [
+          {
+            "type": "address",
+            "name": "addr"
+          },
+          {
+            "type": "string[]",
+            "name": "artifacts"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "targetSelectors",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "tuple[]",
+        "name": "targetedSelectors_",
+        "components": [
+          {
+            "type": "address",
+            "name": "addr"
+          },
+          {
+            "type": "bytes4[]",
+            "name": "selectors"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "targetSenders",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "address[]",
+        "name": "targetedSenders_"
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "testFuzz_Inc",
+    "constant": false,
+    "payable": false,
+    "inputs": [
+      {
+        "type": "uint8",
+        "name": "x"
+      }
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "test_IncByZero",
+    "constant": false,
+    "payable": false,
+    "inputs": [],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "test_InitialValue",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": []
+  }
+]

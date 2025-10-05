@@ -1,10 +1,18 @@
 import type { HardhatUserConfig } from "hardhat/config";
+import hardhatAbiExporter from "@solidstate/hardhat-abi-exporter";
 
 import hardhatToolboxViemPlugin from "@nomicfoundation/hardhat-toolbox-viem";
 import { configVariable } from "hardhat/config";
 
 const config: HardhatUserConfig = {
-  plugins: [hardhatToolboxViemPlugin],
+  plugins: [hardhatToolboxViemPlugin, hardhatAbiExporter],
+  abiExporter: {
+    path: "./abi",
+    runOnCompile: true,
+    clear: true,
+    flat: true,
+    format: "json",
+  },
   solidity: {
     profiles: {
       default: {
