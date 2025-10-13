@@ -23,9 +23,6 @@ importers:
       '@hono/node-server':
         specifier: ^1.19.5
         version: 1.19.5(hono@4.9.9)
-      '@repo/blockchain':
-        specifier: workspace:*
-        version: link:../../packages/blockchain
       hono:
         specifier: ^4.9.9
         version: 4.9.9
