@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "pnpm hardhat build",
-    "test": "pnpm hardhat test && pnpm hardhat test nodejs"
+    "test": "pnpm hardhat test"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ignition": "^3.0.0",

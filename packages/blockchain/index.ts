@@ -1,10 +1,10 @@
-import certificateRegistry from "./abi/CertificateRegistry.json";
+import pki from "./abi/PKI.json";
 
 /**
  * @description The ABI of the contracts.
  */
 export const abis = {
-  certificateRegistry,
+  pki,
 } as const;
 
 /**
@@ -21,7 +21,7 @@ export type Network = "localhost";
  * @description The addresses of the contracts.
  */
 export const contractAddresses: Record<keyof typeof abis, ContractAddress> = {
-  certificateRegistry: {
+  pki: {
     localhost: "0x0000000000000000000000000000000000000000",
   },
 } as const;

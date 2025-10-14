@@ -1,0 +1,460 @@
+[
+  {
+    "type": "constructor",
+    "payable": false,
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "CertificateAlreadyExpired",
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "certificateHash"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "CertificateAlreadyRegistered",
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "certificateHash"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "CertificateAlreadyRevoked",
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "certificateHash"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "CertificateIssuedBeforeIssuerCertificate",
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "certificateHash"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "CertificateNotRegistered",
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "certificateHash"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "CertificateValidityPeriodTooLong",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "certificateExpiresAt"
+      },
+      {
+        "type": "uint256",
+        "name": "issuerCertificateExpiresAt"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "InvalidCertificateHash",
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "certificateHash"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "InvalidOwnerAddress",
+    "inputs": [
+      {
+        "type": "address",
+        "name": "owner"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "IssuanceTimestampInFuture",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "issuedAt"
+      },
+      {
+        "type": "uint256",
+        "name": "blockTimestamp"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "IssuerCertificateNotTrusted",
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "certificateHash"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "OnlyIntermediateCA",
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "certificateHash"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "OnlyIssuer",
+    "inputs": [
+      {
+        "type": "address",
+        "name": "caller"
+      },
+      {
+        "type": "bytes32",
+        "name": "certificateHash"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "OnlyOwner",
+    "inputs": [
+      {
+        "type": "address",
+        "name": "caller"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "OnlyRootCA",
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "certificateHash"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "RevocationTimestampInFuture",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "revokedAt"
+      },
+      {
+        "type": "uint256",
+        "name": "blockTimestamp"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "RevocationTimestampOutOfRange",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "revokedAt"
+      },
+      {
+        "type": "uint256",
+        "name": "issuedAt"
+      },
+      {
+        "type": "uint256",
+        "name": "expiresAt"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "CertificateRegistered",
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "certificateHash",
+        "indexed": true
+      },
+      {
+        "type": "address",
+        "name": "owner",
+        "indexed": true
+      },
+      {
+        "type": "address",
+        "name": "issuer",
+        "indexed": true
+      },
+      {
+        "type": "uint256",
+        "name": "expiresAt",
+        "indexed": false
+      },
+      {
+        "type": "uint8",
+        "name": "certificateType",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "CertificateRevoked",
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "certificateHash",
+        "indexed": true
+      },
+      {
+        "type": "address",
+        "name": "revoker",
+        "indexed": true
+      },
+      {
+        "type": "uint256",
+        "name": "revokedAt",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "getCertificateStatus",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "_certificateHash"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "tuple",
+        "components": [
+          {
+            "type": "address",
+            "name": "owner"
+          },
+          {
+            "type": "bytes32",
+            "name": "issuerCertificateHash"
+          },
+          {
+            "type": "uint256",
+            "name": "issuedAt"
+          },
+          {
+            "type": "uint256",
+            "name": "expiresAt"
+          },
+          {
+            "type": "uint256",
+            "name": "revokedAt"
+          },
+          {
+            "type": "uint8",
+            "name": "certificateType"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "getCertificatesByOwner",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [
+      {
+        "type": "address",
+        "name": "_owner"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "tuple[]",
+        "components": [
+          {
+            "type": "address",
+            "name": "owner"
+          },
+          {
+            "type": "bytes32",
+            "name": "issuerCertificateHash"
+          },
+          {
+            "type": "uint256",
+            "name": "issuedAt"
+          },
+          {
+            "type": "uint256",
+            "name": "expiresAt"
+          },
+          {
+            "type": "uint256",
+            "name": "revokedAt"
+          },
+          {
+            "type": "uint8",
+            "name": "certificateType"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "getOwner",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "address"
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "isCertificateValid",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "_certificateHash"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "registerCertificate",
+    "constant": false,
+    "payable": false,
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "_certificateHash"
+      },
+      {
+        "type": "bytes32",
+        "name": "_issuerCertificateHash"
+      },
+      {
+        "type": "address",
+        "name": "_owner"
+      },
+      {
+        "type": "uint256",
+        "name": "_issuedAt"
+      },
+      {
+        "type": "uint256",
+        "name": "_expiresAt"
+      }
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "registerIntermediateCertificate",
+    "constant": false,
+    "payable": false,
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "_certificateHash"
+      },
+      {
+        "type": "bytes32",
+        "name": "_issuerCertificateHash"
+      },
+      {
+        "type": "address",
+        "name": "_owner"
+      },
+      {
+        "type": "uint256",
+        "name": "_issuedAt"
+      },
+      {
+        "type": "uint256",
+        "name": "_expiresAt"
+      }
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "registerRootCertificate",
+    "constant": false,
+    "payable": false,
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "_certificateHash"
+      },
+      {
+        "type": "uint256",
+        "name": "_issuedAt"
+      },
+      {
+        "type": "uint256",
+        "name": "_expiresAt"
+      }
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "revokeCertificate",
+    "constant": false,
+    "payable": false,
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "_certificateHash"
+      },
+      {
+        "type": "uint256",
+        "name": "_revokedAt"
+      }
+    ],
+    "outputs": []
+  }
+]
