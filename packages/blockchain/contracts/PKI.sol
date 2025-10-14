@@ -165,13 +165,6 @@ contract PKI {
     );
 
     /**
-     * @notice Error emitted when the issuance timestamp is out of range.
-     * @param issuedAt The timestamp of the certificate issuance.
-     * @param expiresAt The expiration date of the certificate.
-     */
-    error IssuanceTimestampOutOfRange(uint256 issuedAt, uint256 expiresAt);
-
-    /**
      * @notice Error emitted when the issuance timestamp is in the future.
      * @param issuedAt The timestamp of the certificate issuance.
      * @param blockTimestamp The timestamp of the block.
@@ -385,18 +378,13 @@ contract PKI {
         );
 
         require(
-            _expiresAt > block.timestamp,
-            CertificateAlreadyExpired(_certificateHash)
-        );
-
-        require(
-            _issuedAt < _expiresAt,
-            IssuanceTimestampOutOfRange(_issuedAt, _expiresAt)
-        );
-
-        require(
             _issuedAt <= block.timestamp,
             IssuanceTimestampInFuture(_issuedAt, block.timestamp)
+        );
+
+        require(
+            _expiresAt > block.timestamp,
+            CertificateAlreadyExpired(_certificateHash)
         );
 
         require(_owner != address(0), InvalidOwnerAddress(_owner));
@@ -413,7 +401,7 @@ contract PKI {
             ];
 
             require(
-                issuerStatus.issuedAt < _issuedAt,
+                issuerStatus.issuedAt <= _issuedAt,
                 CertificateIssuedBeforeIssuerCertificate(_certificateHash)
             );
 
