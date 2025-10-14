@@ -7,10 +7,10 @@ pragma solidity ^0.8.28;
  */
 contract PKI {
     /**
-     * @dev The root CA is set in the constructor and cannot be changed.
-     * @notice The root CA that can register and revoke intermediate certificates.
+     * @dev The owner is set in the constructor and cannot be changed.
+     * @notice The owner of the contract.
      */
-    address private immutable rootCA;
+    address private immutable owner;
 
     /**
      * @dev The type of a certificate.
@@ -46,40 +46,184 @@ contract PKI {
     mapping(address owner => bytes32[] certificateHashes) certificatesByOwner;
 
     /**
+     * @notice Event emitted when a certificate is registered.
      * @param certificateHash The hash of the certificate.
      * @param owner The owner of the certificate.
      * @param expiresAt The expiration date of the certificate.
      */
     event CertificateRegistered(
-        bytes32 certificateHash,
-        address owner,
-        address issuer,
-        uint256 expiresAt
+        bytes32 indexed certificateHash,
+        address indexed owner,
+        address indexed issuer,
+        uint256 expiresAt,
+        CertificateType certificateType
     );
 
     /**
+     * @notice Event emitted when a certificate is revoked.
      * @param certificateHash The hash of the certificate.
      * @param revoker The address that revoked the certificate.
      * @param revokedAt The date the certificate was revoked.
      */
     event CertificateRevoked(
-        bytes32 certificateHash,
-        address revoker,
+        bytes32 indexed certificateHash,
+        address indexed revoker,
         uint256 revokedAt
     );
 
+    /**
+     * @notice Error emitted when the caller is not the owner of the contract.
+     * @param caller The address that called the function.
+     */
+    error OnlyOwner(address caller);
+
+    /**
+     * @notice Error emitted when the certificate is not a root CA.
+     * @param certificateHash The hash of the certificate.
+     */
+    error OnlyRootCA(bytes32 certificateHash);
+
+    /**
+     * @notice Error emitted when the caller is not an intermediate CA.
+     * @param certificateHash The hash of the certificate.
+     */
+    error OnlyIntermediateCA(bytes32 certificateHash);
+
+    /**
+     * @notice Error emitted when the caller is not the issuer of a given certificate.
+     * @param caller The address that called the function.
+     * @param certificateHash The hash of the certificate to check.
+     */
+    error OnlyIssuer(address caller, bytes32 certificateHash);
+
+    /**
+     * @notice Error emitted when the issuer certificate is not trusted.
+     * @param certificateHash The hash of the certificate.
+     */
+    error IssuerCertificateNotTrusted(bytes32 certificateHash);
+
+    /**
+     * @notice Error emitted when the certificate has already been registered.
+     * @param certificateHash The hash of the certificate.
+     */
+    error CertificateAlreadyRegistered(bytes32 certificateHash);
+
+    /**
+     * @notice Error emitted when the certificate is not registered.
+     * @param certificateHash The hash of the certificate.
+     */
+    error CertificateNotRegistered(bytes32 certificateHash);
+
+    /**
+     * @notice Error emitted when the certificate has already expired.
+     * @param certificateHash The hash of the certificate.
+     */
+    error CertificateAlreadyExpired(bytes32 certificateHash);
+
+    /**
+     * @notice Error emitted when the certificate has been issued before the issuer certificate.
+     * @param certificateHash The hash of the certificate.
+     */
+    error CertificateIssuedBeforeIssuerCertificate(bytes32 certificateHash);
+
+    /**
+     * @notice Error emitted when the certificate has already been revoked.
+     * @param certificateHash The hash of the certificate.
+     */
+    error CertificateAlreadyRevoked(bytes32 certificateHash);
+
+    /**
+     * @notice Error emitted when the certificate validity period is too long compared to the issuer certificate.
+     * @param certificateExpiresAt The expiration date of the certificate.
+     * @param issuerCertificateExpiresAt The expiration date of the issuer certificate.
+     */
+    error CertificateValidityPeriodTooLong(
+        uint256 certificateExpiresAt,
+        uint256 issuerCertificateExpiresAt
+    );
+
+    /**
+     * @notice Error emitted when the revocation timestamp is out of range.
+     * @param revokedAt The timestamp of the certificate revocation.
+     * @param issuedAt The date the certificate was issued.
+     * @param expiresAt The expiration date of the certificate.
+     */
+    error RevocationTimestampOutOfRange(
+        uint256 revokedAt,
+        uint256 issuedAt,
+        uint256 expiresAt
+    );
+
+    /**
+     * @notice Error emitted when the revocation timestamp is in the future.
+     * @param revokedAt The timestamp of the certificate revocation.
+     * @param blockTimestamp The timestamp of the block.
+     */
+    error RevocationTimestampInFuture(
+        uint256 revokedAt,
+        uint256 blockTimestamp
+    );
+
+    /**
+     * @notice Error emitted when the issuance timestamp is out of range.
+     * @param issuedAt The timestamp of the certificate issuance.
+     * @param expiresAt The expiration date of the certificate.
+     */
+    error IssuanceTimestampOutOfRange(uint256 issuedAt, uint256 expiresAt);
+
+    /**
+     * @notice Error emitted when the issuance timestamp is in the future.
+     * @param issuedAt The timestamp of the certificate issuance.
+     * @param blockTimestamp The timestamp of the block.
+     */
+    error IssuanceTimestampInFuture(uint256 issuedAt, uint256 blockTimestamp);
+
+    /**
+     * @notice Error emitted when the owner is invalid.
+     * @param owner The owner of the certificate.
+     */
+    error InvalidOwnerAddress(address owner);
+
+    /**
+     * @notice Error emitted when the certificate hash is invalid.
+     * @param certificateHash The hash of the certificate.
+     */
+    error InvalidCertificateHash(bytes32 certificateHash);
+
     constructor() {
-        // The authority is the deployer of the contract.
-        rootCA = msg.sender;
+        // The owner is the deployer of the contract.
+        owner = msg.sender;
+    }
+
+    /**
+     * @dev Modifier to check if the caller is the owner.
+     */
+    modifier onlyOwner() {
+        require(msg.sender == owner, OnlyOwner(msg.sender));
+
+        _;
     }
 
     /**
      * @dev Modifier to check if the caller is the root CA.
+     * @param _certificateHash The hash of the certificate.
      */
-    modifier onlyRootCA() {
+    modifier onlyRootCA(bytes32 _certificateHash) {
+        CertificateStatus memory status = certificates[_certificateHash];
+
         require(
-            msg.sender == rootCA,
-            "Only the root CA can call this function"
+            status.owner == msg.sender,
+            OnlyIssuer(msg.sender, _certificateHash)
+        );
+
+        require(
+            status.certificateType == CertificateType.Root,
+            OnlyRootCA(_certificateHash)
+        );
+
+        require(
+            isCertificateValid(_certificateHash),
+            IssuerCertificateNotTrusted(_certificateHash)
         );
 
         _;
@@ -93,28 +237,18 @@ contract PKI {
         CertificateStatus memory status = certificates[_issuerCertificateHash];
 
         require(
-            status.issuedAt != 0,
-            "The issuer certificate is not registered"
-        );
-
-        require(
-            status.revokedAt == 0,
-            "The issuer certificate has been revoked"
-        );
-
-        require(
             status.owner == msg.sender,
-            "Only the issuer can call this function"
+            OnlyIssuer(msg.sender, _issuerCertificateHash)
         );
 
         require(
             status.certificateType == CertificateType.Intermediate,
-            "Only an intermediate CA can call this function"
+            OnlyIntermediateCA(_issuerCertificateHash)
         );
 
         require(
-            _verifyChainOfTrust(_issuerCertificateHash),
-            "The issuer certificate is not trusted"
+            isCertificateValid(_issuerCertificateHash),
+            IssuerCertificateNotTrusted(_issuerCertificateHash)
         );
 
         _;
@@ -127,13 +261,16 @@ contract PKI {
     modifier onlyIssuer(bytes32 _certificateHash) {
         CertificateStatus memory status = certificates[_certificateHash];
 
-        require(status.issuedAt != 0, "The certificate is not registered");
+        require(
+            status.issuedAt != 0,
+            CertificateNotRegistered(_certificateHash)
+        );
 
         if (status.certificateType == CertificateType.Root) {
             // Verify if the root CA is the caller.
             require(
                 status.owner == msg.sender,
-                "Only the issuer can revoke this certificate"
+                OnlyIssuer(msg.sender, _certificateHash)
             );
         } else {
             // Verify the issuer certificate validity.
@@ -142,55 +279,17 @@ contract PKI {
             ];
 
             require(
-                issuerStatus.issuedAt != 0,
-                "The issuer certificate is not registered"
-            );
-
-            require(
-                issuerStatus.revokedAt == 0,
-                "The issuer certificate has been revoked"
-            );
-
-            require(
                 issuerStatus.owner == msg.sender,
-                "Only the issuer can revoke this certificate"
+                OnlyIssuer(msg.sender, status.issuerCertificateHash)
             );
 
             require(
-                _verifyChainOfTrust(status.issuerCertificateHash),
-                "The issuer certificate is not trusted"
+                isCertificateValid(status.issuerCertificateHash),
+                IssuerCertificateNotTrusted(status.issuerCertificateHash)
             );
         }
 
         _;
-    }
-
-    /**
-     * @notice Verifies the chain of trust for a certificate.
-     * @param _certificateHash The hash of the certificate.
-     * @return True if the chain of trust is valid, false otherwise.
-     */
-    function _verifyChainOfTrust(
-        bytes32 _certificateHash
-    ) internal view returns (bool) {
-        CertificateStatus memory status = certificates[_certificateHash];
-
-        // Verify the certificate is registered, not revoked and not expired.
-        if (
-            status.issuedAt == 0 ||
-            status.revokedAt != 0 ||
-            block.timestamp > status.expiresAt
-        ) {
-            return false;
-        }
-
-        // Verify the certificate is a root CA.
-        if (status.certificateType == CertificateType.Root) {
-            return true;
-        }
-
-        // Verify the chain of trust for the issuer certificate.
-        return _verifyChainOfTrust(status.issuerCertificateHash);
     }
 
     /**
@@ -203,10 +302,10 @@ contract PKI {
         bytes32 _certificateHash,
         uint256 _issuedAt,
         uint256 _expiresAt
-    ) external onlyRootCA {
+    ) external onlyOwner {
         _issueCertificate(
             _certificateHash,
-            0x00,
+            bytes32(0),
             msg.sender,
             _issuedAt,
             _expiresAt,
@@ -227,7 +326,7 @@ contract PKI {
         address _owner,
         uint256 _issuedAt,
         uint256 _expiresAt
-    ) external onlyRootCA {
+    ) external onlyRootCA(_issuerCertificateHash) {
         _issueCertificate(
             _certificateHash,
             _issuerCertificateHash,
@@ -280,24 +379,52 @@ contract PKI {
         uint256 _expiresAt,
         CertificateType _certificateType
     ) private {
-        CertificateStatus memory issuerStatus = certificates[
-            _issuerCertificateHash
-        ];
-
         require(
             certificates[_certificateHash].issuedAt == 0,
-            "The certificate has already been registered"
+            CertificateAlreadyRegistered(_certificateHash)
         );
 
         require(
             _expiresAt > block.timestamp,
-            "The certificate has already expired"
+            CertificateAlreadyExpired(_certificateHash)
         );
 
         require(
-            issuerStatus.issuedAt < _issuedAt,
-            "The certificate cannot be issued before the issuer certificate"
+            _issuedAt < _expiresAt,
+            IssuanceTimestampOutOfRange(_issuedAt, _expiresAt)
         );
+
+        require(
+            _issuedAt <= block.timestamp,
+            IssuanceTimestampInFuture(_issuedAt, block.timestamp)
+        );
+
+        require(_owner != address(0), InvalidOwnerAddress(_owner));
+
+        require(
+            _certificateHash != bytes32(0),
+            InvalidCertificateHash(_certificateHash)
+        );
+
+        // Check the issuer certificate validity (except for root certificates).
+        if (_certificateType != CertificateType.Root) {
+            CertificateStatus memory issuerStatus = certificates[
+                _issuerCertificateHash
+            ];
+
+            require(
+                issuerStatus.issuedAt < _issuedAt,
+                CertificateIssuedBeforeIssuerCertificate(_certificateHash)
+            );
+
+            require(
+                _expiresAt <= issuerStatus.expiresAt,
+                CertificateValidityPeriodTooLong(
+                    _expiresAt,
+                    issuerStatus.expiresAt
+                )
+            );
+        }
 
         // Register the certificate.
         certificates[_certificateHash] = CertificateStatus({
@@ -317,7 +444,8 @@ contract PKI {
             _certificateHash,
             _owner,
             msg.sender,
-            _expiresAt
+            _expiresAt,
+            _certificateType
         );
     }
 
@@ -330,14 +458,30 @@ contract PKI {
         bytes32 _certificateHash,
         uint256 _revokedAt
     ) external onlyIssuer(_certificateHash) {
+        CertificateStatus memory status = certificates[_certificateHash];
+
         require(
-            certificates[_certificateHash].revokedAt == 0,
-            "The certificate has already been revoked"
+            status.revokedAt == 0,
+            CertificateAlreadyRevoked(_certificateHash)
         );
 
         require(
-            _revokedAt > block.timestamp,
-            "The certificate has already expired"
+            status.expiresAt > block.timestamp,
+            CertificateAlreadyExpired(_certificateHash)
+        );
+
+        require(
+            (_revokedAt >= status.issuedAt) && (_revokedAt <= status.expiresAt),
+            RevocationTimestampOutOfRange(
+                _revokedAt,
+                status.issuedAt,
+                status.expiresAt
+            )
+        );
+
+        require(
+            _revokedAt <= block.timestamp,
+            RevocationTimestampInFuture(_revokedAt, block.timestamp)
         );
 
         // Revoke the certificate.
@@ -348,14 +492,61 @@ contract PKI {
     }
 
     /**
+     * @notice Gets the contract owner.
+     * @return The owner.
+     */
+    function getOwner() external view returns (address) {
+        return owner;
+    }
+
+    /**
+     * @notice Verifies the chain of trust for a certificate.
+     * @param _certificateHash The hash of the certificate.
+     * @return True if the chain of trust is valid, false otherwise.
+     */
+    function _verifyChainOfTrust(
+        bytes32 _certificateHash
+    ) internal view returns (bool) {
+        CertificateStatus memory status = certificates[_certificateHash];
+
+        // Verify the certificate is registered, not revoked and not expired.
+        if (
+            status.issuedAt == 0 ||
+            status.revokedAt != 0 ||
+            block.timestamp > status.expiresAt
+        ) {
+            return false;
+        }
+
+        // Verify the certificate is a root CA.
+        if (status.certificateType == CertificateType.Root) {
+            return true;
+        }
+
+        // Verify the chain of trust for the issuer certificate.
+        return _verifyChainOfTrust(status.issuerCertificateHash);
+    }
+
+    /**
      * @notice Verifies if a certificate is valid.
      * @param _certificateHash The hash of the certificate.
      * @return True if the certificate is valid, false otherwise.
      */
     function isCertificateValid(
         bytes32 _certificateHash
-    ) external view returns (bool) {
+    ) public view returns (bool) {
         return _verifyChainOfTrust(_certificateHash);
+    }
+
+    /**
+     * @notice Gets the status of a certificate.
+     * @param _certificateHash The hash of the certificate.
+     * @return The status of the certificate.
+     */
+    function getCertificateStatus(
+        bytes32 _certificateHash
+    ) external view returns (CertificateStatus memory) {
+        return certificates[_certificateHash];
     }
 
     /**
