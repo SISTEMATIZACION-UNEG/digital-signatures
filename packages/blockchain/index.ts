@@ -15,7 +15,7 @@ export type ContractAddress = Record<Network, string>;
 /**
  * @description The networks.
  */
-export type Network = "localhost";
+export type Network = "localhost" | "unegia";
 
 /**
  * @description The addresses of the contracts.
@@ -23,5 +23,6 @@ export type Network = "localhost";
 export const contractAddresses: Record<keyof typeof abis, ContractAddress> = {
   pki: {
     localhost: "0x0000000000000000000000000000000000000000",
+    unegia: "0x0000000000000000000000000000000000000000",
   },
 } as const;

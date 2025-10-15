@@ -44,6 +44,12 @@ const config: HardhatUserConfig = {
       url: configVariable("SEPOLIA_RPC_URL"),
       accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
     },
+    unegia: {
+      type: "http",
+      chainType: "l1",
+      url: configVariable("UNEGIA_RPC_URL"),
+      accounts: [configVariable("UNEGIA_PRIVATE_KEY")],
+    },
   },
 };
 
