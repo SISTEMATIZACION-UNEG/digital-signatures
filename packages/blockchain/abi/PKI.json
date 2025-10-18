@@ -114,8 +114,12 @@
   },
   {
     "type": "error",
-    "name": "OnlyIntermediateCA",
+    "name": "OnlyCertificateOwner",
     "inputs": [
+      {
+        "type": "address",
+        "name": "caller"
+      },
       {
         "type": "bytes32",
         "name": "certificateHash"
@@ -124,12 +128,22 @@
   },
   {
     "type": "error",
-    "name": "OnlyIssuer",
+    "name": "OnlyCertificateOwnerOrIssuer",
     "inputs": [
       {
         "type": "address",
         "name": "caller"
       },
+      {
+        "type": "bytes32",
+        "name": "certificateHash"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "OnlyIntermediateCA",
+    "inputs": [
       {
         "type": "bytes32",
         "name": "certificateHash"

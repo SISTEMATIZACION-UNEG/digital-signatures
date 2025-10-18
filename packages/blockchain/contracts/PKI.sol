@@ -90,11 +90,18 @@ contract PKI {
     error OnlyIntermediateCA(bytes32 certificateHash);
 
     /**
-     * @notice Error emitted when the caller is not the issuer of a given certificate.
+     * @notice Error emitted when the caller is not the owner of a given certificate.
      * @param caller The address that called the function.
-     * @param certificateHash The hash of the certificate to check.
+     * @param certificateHash The hash of the given certificate.
      */
-    error OnlyIssuer(address caller, bytes32 certificateHash);
+    error OnlyCertificateOwner(address caller, bytes32 certificateHash);
+
+    /**
+     * @notice Error emitted when the caller is not the owner or the issuer of a given certificate.
+     * @param caller The address that called the function.
+     * @param certificateHash The hash of the given certificate.
+     */
+    error OnlyCertificateOwnerOrIssuer(address caller, bytes32 certificateHash);
 
     /**
      * @notice Error emitted when the issuer certificate is not trusted.
@@ -206,7 +213,7 @@ contract PKI {
 
         require(
             status.owner == msg.sender,
-            OnlyIssuer(msg.sender, _certificateHash)
+            OnlyCertificateOwner(msg.sender, _certificateHash)
         );
 
         require(
@@ -231,7 +238,7 @@ contract PKI {
 
         require(
             status.owner == msg.sender,
-            OnlyIssuer(msg.sender, _issuerCertificateHash)
+            OnlyCertificateOwner(msg.sender, _issuerCertificateHash)
         );
 
         require(
@@ -248,10 +255,10 @@ contract PKI {
     }
 
     /**
-     * @dev Modifier to check if the caller is the issuer of the certificate.
+     * @dev Modifier to check if the caller is the owner or the issuer of the certificate.
      * @param _certificateHash The hash of the certificate.
      */
-    modifier onlyIssuer(bytes32 _certificateHash) {
+    modifier onlyCertificateOwnerOrIssuer(bytes32 _certificateHash) {
         CertificateStatus memory status = certificates[_certificateHash];
 
         require(
@@ -259,13 +266,8 @@ contract PKI {
             CertificateNotRegistered(_certificateHash)
         );
 
-        if (status.certificateType == CertificateType.Root) {
-            // Verify if the root CA is the caller.
-            require(
-                status.owner == msg.sender,
-                OnlyIssuer(msg.sender, _certificateHash)
-            );
-        } else {
+        // Handle when the caller is not the owner of the certificate.
+        if (status.owner != msg.sender) {
             // Verify the issuer certificate validity.
             CertificateStatus memory issuerStatus = certificates[
                 status.issuerCertificateHash
@@ -273,7 +275,7 @@ contract PKI {
 
             require(
                 issuerStatus.owner == msg.sender,
-                OnlyIssuer(msg.sender, status.issuerCertificateHash)
+                OnlyCertificateOwnerOrIssuer(msg.sender, _certificateHash)
             );
 
             require(
@@ -445,7 +447,7 @@ contract PKI {
     function revokeCertificate(
         bytes32 _certificateHash,
         uint256 _revokedAt
-    ) external onlyIssuer(_certificateHash) {
+    ) external onlyCertificateOwnerOrIssuer(_certificateHash) {
         CertificateStatus memory status = certificates[_certificateHash];
 
         require(

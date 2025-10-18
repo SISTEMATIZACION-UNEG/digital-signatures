@@ -194,7 +194,7 @@ contract PKITest is Test {
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                PKI.OnlyIssuer.selector,
+                PKI.OnlyCertificateOwner.selector,
                 issuer,
                 rootCertificateHash
             )
@@ -307,7 +307,7 @@ contract PKITest is Test {
     function testRegisterEndEntityCertificateRevertsWhenIsNotIssuer() public {
         vm.expectRevert(
             abi.encodeWithSelector(
-                PKI.OnlyIssuer.selector,
+                PKI.OnlyCertificateOwner.selector,
                 address(this),
                 intermediateCertificateHash
             )
@@ -646,7 +646,7 @@ contract PKITest is Test {
     {
         vm.expectRevert(
             abi.encodeWithSelector(
-                PKI.OnlyIssuer.selector,
+                PKI.OnlyCertificateOwnerOrIssuer.selector,
                 address(this),
                 rootCertificateHash
             )
@@ -655,17 +655,30 @@ contract PKITest is Test {
         pki.revokeCertificate(rootCertificateHash, block.timestamp);
     }
 
+    function testRevokeCertificateWhenCallerIsTheCertificateOwner() public {
+        vm.startPrank(owner);
+
+        pki.revokeCertificate(rootCertificateHash, block.timestamp);
+
+        vm.stopPrank();
+    }
+
+    function testRevokeCertificateWhenCallerIsTheCertificateIssuer() public {
+        vm.startPrank(owner);
+
+        pki.revokeCertificate(intermediateCertificateHash, block.timestamp);
+
+        vm.stopPrank();
+    }
+
     function testRevokeCertificateRevertsWhenIsNotIssuer() public {
         vm.startPrank(owner);
 
-        PKI.CertificateStatus memory certificateStatus = pki
-            .getCertificateStatus(endEntityCertificateHash);
-
         vm.expectRevert(
             abi.encodeWithSelector(
-                PKI.OnlyIssuer.selector,
+                PKI.OnlyCertificateOwnerOrIssuer.selector,
                 owner,
-                certificateStatus.issuerCertificateHash
+                endEntityCertificateHash
             )
         );
 
