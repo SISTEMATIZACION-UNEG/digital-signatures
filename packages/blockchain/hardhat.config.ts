@@ -1,10 +1,20 @@
 import type { HardhatUserConfig } from "hardhat/config";
+import hardhatAbiExporter from "@solidstate/hardhat-abi-exporter";
 
 import hardhatToolboxViemPlugin from "@nomicfoundation/hardhat-toolbox-viem";
 import { configVariable } from "hardhat/config";
 
 const config: HardhatUserConfig = {
-  plugins: [hardhatToolboxViemPlugin],
+  plugins: [hardhatToolboxViemPlugin, hardhatAbiExporter],
+  abiExporter: {
+    path: "./abi",
+    runOnCompile: true,
+    clear: true,
+    flat: true,
+    format: "json",
+    // Exclude test contracts from ABI export.
+    except: [/Test$/],
+  },
   solidity: {
     profiles: {
       default: {
@@ -35,6 +45,12 @@ const config: HardhatUserConfig = {
       chainType: "l1",
       url: configVariable("SEPOLIA_RPC_URL"),
       accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
+    },
+    unegia: {
+      type: "http",
+      chainType: "l1",
+      url: configVariable("UNEGIA_RPC_URL"),
+      accounts: [configVariable("UNEGIA_PRIVATE_KEY")],
     },
   },
 };

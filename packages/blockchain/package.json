@@ -3,13 +3,17 @@
   "version": "1.0.0",
   "type": "module",
   "private": true,
+  "exports": {
+    ".": "./index.ts"
+  },
   "scripts": {
     "build": "pnpm hardhat build",
-    "test": "pnpm hardhat test && pnpm hardhat test nodejs"
+    "test": "pnpm hardhat test"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ignition": "^3.0.0",
     "@nomicfoundation/hardhat-toolbox-viem": "^5.0.0",
+    "@solidstate/hardhat-abi-exporter": "^3.0.0",
     "@types/node": "^22.8.5",
     "forge-std": "github:foundry-rs/forge-std#v1.9.4",
     "hardhat": "^3.0.6",
