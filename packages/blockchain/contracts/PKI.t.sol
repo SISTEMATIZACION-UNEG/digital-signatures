@@ -376,6 +376,30 @@ contract PKITest is Test {
         vm.stopPrank();
     }
 
+    function testIssueCertificateAppendsToOwnerCertificates() public {
+        uint256 initialOwnerCertificatesCount = pki
+            .getCertificatesByOwner(owner)
+            .length;
+
+        // Add a new certificate to the owner.
+        vm.startPrank(owner);
+
+        pki.registerRootCertificate(
+            stringToBytes32("new-root-ca"),
+            block.timestamp,
+            block.timestamp + (365 days * 10)
+        );
+
+        vm.stopPrank();
+
+        // Verify the owner has one more certificate.
+        require(
+            pki.getCertificatesByOwner(owner).length ==
+                initialOwnerCertificatesCount + 1,
+            "The owner must have one more certificate"
+        );
+    }
+
     function testIssueCeritificateRevertsWhenCertificateIsAlreadyRegistered()
         public
     {
@@ -871,6 +895,50 @@ contract PKITest is Test {
                 stringToBytes32("not-registered-certificate")
             ),
             "Certificate should not be valid when it is not registered"
+        );
+    }
+
+    function testGetCertificateStatus() public view {
+        PKI.CertificateStatus memory status = pki.getCertificateStatus(
+            rootCertificateHash
+        );
+
+        require(status.issuedAt > 0, "The certificate must exist");
+    }
+
+    function testGetCertificateWhenCertificateIsNotRegistered() public view {
+        require(
+            pki
+                .getCertificateStatus(
+                    stringToBytes32("not-registered-certificate")
+                )
+                .issuedAt == 0,
+            "The certificate should not exist"
+        );
+    }
+
+    function testGetCertificatesByOwner() public {
+        // Verify the owner has at least one certificate (which was registered in the setup).
+        require(
+            pki.getCertificatesByOwner(owner).length == 1,
+            "The owner must have at least one certificate"
+        );
+
+        // Register a new certificate for the owner.
+        vm.startPrank(owner);
+
+        pki.registerRootCertificate(
+            stringToBytes32("new-root-ca"),
+            block.timestamp,
+            block.timestamp + (365 days * 10)
+        );
+
+        vm.stopPrank();
+
+        // Verify the owner has two certificates.
+        require(
+            pki.getCertificatesByOwner(owner).length == 2,
+            "The owner must have two certificates"
         );
     }
 }
