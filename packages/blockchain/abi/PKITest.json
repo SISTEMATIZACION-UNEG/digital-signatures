@@ -824,6 +824,22 @@
   },
   {
     "type": "function",
+    "name": "testRevokeCertificateWhenCallerIsTheCertificateIssuer",
+    "constant": false,
+    "payable": false,
+    "inputs": [],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "testRevokeCertificateWhenCallerIsTheCertificateOwner",
+    "constant": false,
+    "payable": false,
+    "inputs": [],
+    "outputs": []
+  },
+  {
+    "type": "function",
     "name": "testRevokeCertificateWhenIsEndEntityCertificate",
     "constant": false,
     "payable": false,
