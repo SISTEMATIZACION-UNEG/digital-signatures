@@ -12,6 +12,8 @@ const config: HardhatUserConfig = {
     clear: true,
     flat: true,
     format: "json",
+    // Exclude test contracts from ABI export.
+    except: [/Test$/],
   },
   solidity: {
     profiles: {
