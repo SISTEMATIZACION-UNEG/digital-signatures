@@ -1,16 +1,4 @@
-import pki from "./abi/PKI.json";
-
-/**
- * @description The ABI of the contracts.
- */
-export const abis = {
-  pki,
-} as const;
-
-/**
- * @description The address of the contracts by network.
- */
-export type ContractAddress = Record<Network, string>;
+import pkiRegistryAbi from "./abi/PKIRegistry.json";
 
 /**
  * @description The networks.
@@ -18,11 +6,27 @@ export type ContractAddress = Record<Network, string>;
 export type Network = "localhost" | "unegia";
 
 /**
- * @description The addresses of the contracts.
+ * @description The names of the contracts.
  */
-export const contractAddresses: Record<keyof typeof abis, ContractAddress> = {
-  pki: {
-    localhost: "0x0000000000000000000000000000000000000000",
-    unegia: "0x0000000000000000000000000000000000000000",
+export type ContractName = "pkiRegistry";
+
+/**
+ * @description The settings of the contracts.
+ */
+type ContractSettings = {
+  abi: any;
+  address: Record<Network, `0x${string}`>;
+};
+
+/**
+ * @description The contracts.
+ */
+export const contracts: Record<ContractName, ContractSettings> = {
+  pkiRegistry: {
+    abi: pkiRegistryAbi,
+    address: {
+      localhost: "0x0000000000000000000000000000000000000000",
+      unegia: "0x0000000000000000000000000000000000000000",
+    },
   },
-} as const;
+};

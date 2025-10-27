@@ -48,9 +48,13 @@ const config: HardhatUserConfig = {
     },
     unegia: {
       type: "http",
-      chainType: "l1",
-      url: configVariable("UNEGIA_RPC_URL"),
+      url: "http://127.0.0.1:5600",
       accounts: [configVariable("UNEGIA_PRIVATE_KEY")],
+      timeout: 60000,
+      chainId: 963741852,
+      from: "0x5b1483201715c90db2acd38bff8dfbd50222fb64",
+      gas: 25000000,
+      gasPrice: 1000000000,
     },
   },
 };
