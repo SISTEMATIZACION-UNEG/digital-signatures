@@ -4,10 +4,12 @@ import { drizzle } from "drizzle-orm/libsql";
 
 import { env } from "@/core/utils/env";
 
+import * as schema from "./schema";
+
 /** The database client. */
 export const client = createClient({
   url: env.DB_URL,
 });
 
 /** The database instance. */
-export const db = drizzle({ client });
+export const db = drizzle({ client, schema });
