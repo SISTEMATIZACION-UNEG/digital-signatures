@@ -1,11 +1,6 @@
 import { serve } from "@hono/node-server";
-import { Hono } from "hono";
 
-const app = new Hono();
-
-app.get("/", (c) => {
-  return c.text("Hello Hono!");
-});
+import { app } from "./routes";
 
 serve(
   {
@@ -13,8 +8,6 @@ serve(
     port: 3000,
   },
   (info) => {
-    console.log(`Running on ${process.env.NODE_ENV} environment`);
-
     console.log(`Server is running on http://localhost:${info.port}`);
-  }
+  },
 );
