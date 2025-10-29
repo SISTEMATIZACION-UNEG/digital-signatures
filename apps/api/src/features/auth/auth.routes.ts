@@ -1,7 +1,7 @@
 import { authMiddleware } from "@/middleware/auth.middleware";
 import { Hono } from "hono";
 
-import { AuthController } from "./controller";
+import { AuthController } from "./auth.controller";
 
 /**
  * @description The auth routes.

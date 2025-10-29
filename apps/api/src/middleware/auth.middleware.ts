@@ -1,7 +1,7 @@
 import { createMiddleware } from "hono/factory";
 import { jwt } from "hono/jwt";
 
-import { JwtService } from "@/core/services/jwt";
+import { JwtService } from "@/core/services/jwt.service";
 import { ApiResponse } from "@/core/utils/api-response";
 import { env } from "@/core/utils/env";
 

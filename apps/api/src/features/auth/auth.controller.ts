@@ -4,7 +4,7 @@ import z from "zod";
 
 import { UserDao } from "@/database/dao/user.dao";
 
-import { JwtService } from "@/core/services/jwt";
+import { JwtService } from "@/core/services/jwt.service";
 import { ApiResponse } from "@/core/utils/api-response";
 
 import { loginSchema } from "./schemas/login.schema";

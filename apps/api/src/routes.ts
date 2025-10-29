@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 
-import { authRoutes } from "./features/auth/routes";
+import { authRoutes } from "./features/auth/auth.routes";
 
 /**
  * @description The main app.
