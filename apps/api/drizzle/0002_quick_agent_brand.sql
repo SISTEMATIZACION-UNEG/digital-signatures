@@ -1,0 +1,1 @@
+ALTER TABLE `certificates` ADD `status` text DEFAULT 'pending-signature' NOT NULL;

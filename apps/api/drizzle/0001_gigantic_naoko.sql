@@ -1,0 +1,2 @@
+ALTER TABLE `certification_requests` ADD `public_key_fingerprint` text NOT NULL;--> statement-breakpoint
+CREATE UNIQUE INDEX `certification_requests_public_key_fingerprint_unique` ON `certification_requests` (`public_key_fingerprint`);

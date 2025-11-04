@@ -3,7 +3,11 @@ import { sqliteTable, text, blob } from "drizzle-orm/sqlite-core";
 
 import { createUlid } from "@/core/utils/create-ulid";
 
-import type { UserRole, CertificationRequestStatus } from "./types";
+import type {
+  UserRole,
+  CertificationRequestStatus,
+  CertificateStatus,
+} from "./enums";
 
 /** The users table. */
 export const users = sqliteTable("users", {
@@ -29,6 +33,7 @@ export const certificationRequests = sqliteTable("certification_requests", {
     .references(() => users.id)
     .notNull(),
   csr: blob({ mode: "buffer" }).notNull(),
+  publicKeyFingerprint: text("public_key_fingerprint").notNull().unique(),
   status: text()
     .$type<CertificationRequestStatus>()
     .notNull()
@@ -71,6 +76,10 @@ export const certificates = sqliteTable("certificates", {
   ),
   certificate: blob({ mode: "buffer" }).notNull(),
   hash: text().notNull().unique(),
+  status: text()
+    .$type<CertificateStatus>()
+    .notNull()
+    .default("pending-signature"),
   createdAt: text("created_at")
     .notNull()
     .default(sql`(CURRENT_TIMESTAMP)`),
